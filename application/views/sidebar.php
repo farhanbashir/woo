@@ -16,12 +16,12 @@
     <ul class="sidebar-menu">
         <li class="treeview">
             <a href="#">
-                <i class="fa fa-edit"></i> <span>Whats On</span>
+                <i class="fa fa-edit"></i> <span>Menu Here</span>
                 <i class="fa pull-right fa-angle-left"></i>
             </a>
-            <ul class="treeview-menu" style="display: none;">
+            <!-- <ul class="treeview-menu" style="display: none;">
                 <li><a href="<?php echo site_url('admin/events') ?>" style="margin-left: 10px;"><i class="fa fa-angle-double-right"></i>Events</a></li>
-            </ul>
+            </ul> -->
         </li>
     </ul>
 </section>

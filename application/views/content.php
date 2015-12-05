@@ -36,11 +36,11 @@
             <div class="small-box bg-yellow">
                 <div class="inner">
                     <h3>
-                        <?php //echo $total_events;?>
+                        <?php echo 35;//echo $total_events;?>
                     </h3>
-                    <!-- <p>
-                        Total Events
-                    </p> -->
+                    <p>
+                        Some other thing
+                    </p>
                 </div>
                 <div class="icon">
                     <i class="ion ion-person-add"></i>
@@ -61,7 +61,9 @@
                                     <table class="table table-condensed">
                                         <tbody><tr>
                                             <th style="width: 10px">#</th>
-                                            <th>Username</th>
+                                            <th>Email</th>
+                                            <th>First Name</th>
+                                            <th>Last Name</th>
                                         </tr>
                                         <?php
                                         $i=0;
@@ -72,6 +74,8 @@
                                         <tr>
                                             <td><?php echo $i;?></td>
                                             <td><?php echo $user['username'];?></td>
+                                            <td><?php echo $user['first_name'];?></td>
+                                            <td><?php echo $user['last_name'];?></td>
                                         </tr>
                                         <?php
                                         }
