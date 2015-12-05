@@ -27,35 +27,35 @@ class Api extends REST_Controller {
 	   $this->load->model('user','',TRUE);
        $this->load->model('device','',TRUE);
        
-       // if(!in_array($this->router->method, $this->config->item('allowed_calls_without_token')))
-       // {
-       //      $headers = getallheaders();
-       //      if(isset($headers['Token']))
-       //      {
-       //          if(isset($headers['Userid']))
-       //          {
-       //              if(!$this->device->validToken($headers['Userid'],$headers['Token']))
-       //              {
-       //                  $data["header"]["error"] = "1";
-       //                  $data["header"]["message"] = "Please provide valid token";
-       //                  $this->response($data, 200);                     
-       //              }    
-       //          }   
-       //          else
-       //          {
-       //              $data["header"]["error"] = "1";
-       //              $data["header"]["message"] = "Please provide user id (header)";
-       //              $this->response($data, 200);              
-       //          } 
-       //      } 
-       //      else
-       //      {
-       //          $data["header"]["error"] = "1";
-       //          $data["header"]["message"] = "Please provide access token";
-       //          $this->response($data, 200);       
-       //      }    
+       if(!in_array($this->router->method, $this->config->item('allowed_calls_without_token')))
+       {
+            $headers = getallheaders();
+            if(isset($headers['Token']))
+            {
+                if(isset($headers['Userid']))
+                {
+                    if(!$this->device->validToken($headers['Userid'],$headers['Token']))
+                    {
+                        $data["header"]["error"] = "1";
+                        $data["header"]["message"] = "Please provide valid token";
+                        $this->response($data, 200);                     
+                    }    
+                }   
+                else
+                {
+                    $data["header"]["error"] = "1";
+                    $data["header"]["message"] = "Please provide user id (header)";
+                    $this->response($data, 200);              
+                } 
+            } 
+            else
+            {
+                $data["header"]["error"] = "1";
+                $data["header"]["message"] = "Please provide access token";
+                $this->response($data, 200);       
+            }    
         
-       // } 
+       } 
         
        
 	 }
@@ -140,17 +140,19 @@ class Api extends REST_Controller {
 
     function signup_post()
     {
-        $username = $this->post('username');
+        $first_name = $this->post('first_name');
+        $last_name = $this->post('last_name');
+        $email = $this->post('email');
         $password = $this->post('password');
         $device_id = $this->post('device_id');
         $device_type = $this->post('device_type');
-        $email = $username;
+        $username = $email;
         $verified = 1;
 
         if(!$username)
         {
             $data["header"]["error"] = "1";
-            $data["header"]["message"] = "Username is required";
+            $data["header"]["message"] = "Email is required";
             $this->response($data, 400);
         }   
         if(!$password)
@@ -160,7 +162,7 @@ class Api extends REST_Controller {
             $this->response($data, 400);
         } 
 
-        $user = array("username"=>$username,"password"=>md5($password),"email"=>$email,"verified"=>$verified);
+        $user = array("first_name"=>$first_name,"last_name"=>$last_name,"username"=>$username,"password"=>md5($password),"email"=>$email,"verified"=>$verified);
         $user_id = $this->user->add_user($user);
 
         //insert device table
@@ -179,7 +181,7 @@ class Api extends REST_Controller {
     {
     	$data = array();
 
-    	$username = $this->post('username');
+    	$username = $this->post('email');
     	$password = $this->post('password');
         $device_id = $this->post('device_id');
         $device_type = $this->post('device_type');
@@ -187,7 +189,7 @@ class Api extends REST_Controller {
         if(!$username || !$password)
         {
             $data["header"]["error"] = "1";
-            $data["header"]["message"] = "Username or password is incorrect";
+            $data["header"]["message"] = "Email or password is incorrect";
             $this->response($data, 400);
         }
         else
@@ -242,12 +244,12 @@ class Api extends REST_Controller {
     {
     	$data = array();
 
-        $username = $this->post('username');
+        $username = $this->post('email');
 
         if(!$username)
         {
             $data["header"]["error"] = "1";
-            $data["header"]["message"] = "Please provide username";
+            $data["header"]["message"] = "Please provide email";
             $this->response($data,400);
         }
         else
@@ -257,7 +259,7 @@ class Api extends REST_Controller {
             if(!$user)
             {
                 $data["header"]["error"] = "1";
-                $data["header"]["message"] = "No user found with this username";
+                $data["header"]["message"] = "No user found with this email";
                 $this->response($data,200);
             }   
             else
