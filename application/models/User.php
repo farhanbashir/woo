@@ -23,11 +23,52 @@ Class User extends CI_Model
         }
     }
 
+    function facebookLogin($facebook_id, $is_admin)
+    {
+        $this -> db -> select('user_id, username, password');
+        $this -> db -> from('users');
+        $this -> db -> where('facebook_id', $facebook_id);
+        $this -> db -> where('is_admin', $is_admin);
+        $this -> db -> limit(1);
+
+        $query = $this -> db -> get();
+
+        if($query -> num_rows() == 1)
+        {
+            return $query->result();
+        }
+        else
+        {
+            return false;
+        }
+    }
+
     function checkUser($username)
     {
         $this -> db -> select('user_id, username, email');
         $this -> db -> from('users');
         $this -> db -> where('username', $username);
+        //$this -> db -> where('is_admin', $is_admin);
+        //$this -> db -> where('password', $password);
+        $this -> db -> limit(1);
+
+        $query = $this -> db -> get();
+
+        if($query -> num_rows() == 1)
+        {
+            return $query->result();
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    function checkFacebookUser($facebook_id)
+    {
+        $this -> db -> select('user_id, username, email');
+        $this -> db -> from('users');
+        $this -> db -> where('facebook_id', $facebook_id);
         //$this -> db -> where('is_admin', $is_admin);
         //$this -> db -> where('password', $password);
         $this -> db -> limit(1);

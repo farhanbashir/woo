@@ -145,6 +145,7 @@ class Api extends REST_Controller {
         $email = $this->post('email');
         $password = $this->post('password');
         $device_id = $this->post('device_id');
+        $facebook_id = $this->post('facebook_id');
         $device_type = $this->post('device_type');
         $username = $email;
         $verified = 1;
@@ -160,9 +161,28 @@ class Api extends REST_Controller {
             $data["header"]["error"] = "1";
             $data["header"]["message"] = "Password is required";
             $this->response($data, 400);
+        }
+
+        $already_present = $this->user->checkUser($email);
+        if($already_present !== false)
+        {
+            $data["header"]["error"] = "1";
+            $data["header"]["message"] = "User already present with this username";
+            $this->response($data, 400);   
         } 
 
-        $user = array("first_name"=>$first_name,"last_name"=>$last_name,"username"=>$username,"password"=>md5($password),"email"=>$email,"verified"=>$verified);
+        if($facebook_id)
+        {
+            $already_present = $this->user->checkFacebookUser($facebook_id);
+            if($already_present !== false)
+            {
+                $data["header"]["error"] = "1";
+                $data["header"]["message"] = "User already present with this facebook account";
+                $this->response($data, 400);   
+            }            
+        }    
+
+        $user = array("first_name"=>$first_name,"last_name"=>$last_name,"username"=>$username,"password"=>md5($password),"email"=>$email,"verified"=>$verified,"facebook_id"=>$facebook_id);
         $user_id = $this->user->add_user($user);
 
         //insert device table
@@ -234,6 +254,68 @@ class Api extends REST_Controller {
             {
                 $data["header"]["error"] = "1";
                 $data["header"]["message"] = "Username or password is incorrect";
+            }
+
+            $this->response($data);
+        }
+    }
+
+    function facebookLogin_post()
+    {
+        $data = array();
+
+        $facebook_id = $this->post('facebook_id');
+        $device_id = $this->post('device_id');
+        $device_type = $this->post('device_type');
+
+        if(!$facebook_id)
+        {
+            $data["header"]["error"] = "1";
+            $data["header"]["message"] = "Please provide facebook id";
+            $this->response($data, 400);
+        }
+        else
+        {
+            $result = $this->user->facebookLogin($facebook_id , 0);
+            
+            if($result !== false)
+            {
+                $user = (array) $result[0];
+                $token = bin2hex(openssl_random_pseudo_bytes(16));    
+                
+
+                //insert device table
+                if(isset($device_type) && isset($device_id))
+                {
+                    $device_data = array('user_id'=>$user['user_id'],'uid'=>$device_id, 'type'=>$device_type,'token'=>$token);
+                    //$this->device->insert_device($device_data);
+
+                    $device = $this->device->get_user_device($user['user_id'], $device_type);
+                    if(count($device) > 0)
+                    {
+                        //update device table
+                        $device_data = array('uid'=>$device_id, 'type'=>$device_type,'token'=>$token);
+                        $this->device->edit_device($user['user_id'], $device_data);
+                    }
+                    else
+                    {
+                        //insert device table
+                        $device_data = array('user_id'=>$user['user_id'],'uid'=>$device_id, 'type'=>$device_type,'token'=>$token);
+                        $this->device->insert_device($device_data);
+                    }    
+                }    
+                
+                $array['user_id'] = $user['user_id'];
+                $array['Token'] = $token;
+                $array['user'] = $user;
+                $data["header"]["error"] = "0";
+                $data["header"]["message"] = "Login successfully";
+                $data['body'] = $array;
+            }
+            else
+            {
+                $data["header"]["error"] = "1";
+                $data["header"]["message"] = "No user found";
             }
 
             $this->response($data);

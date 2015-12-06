@@ -7,6 +7,6 @@ $config['pagination_limit'] = 10;
 $config["pem"] = '\assets\files\ck.pem';
 $config["admin_emails"] = "farhan.bashir2002@gmail.com,syed.sami@createmedia-group.com";
 $config['default_email'] = "admin@woo.com";
-$config["allowed_calls_without_token"] = array("login","forgetPassword","signup");
+$config["allowed_calls_without_token"] = array("login","forgetPassword","signup", "facebookLogin");
 $config["receiption_phone"] = "026731111";
 $config["android_notification_title"] = "The-Woo";
