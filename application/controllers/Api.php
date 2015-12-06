@@ -150,6 +150,11 @@ class Api extends REST_Controller {
         $username = $email;
         $verified = 1;
 
+        if(!$facebook_id)
+        {
+            $facebook_id = '';
+        }    
+
         if(!$username)
         {
             $data["header"]["error"] = "1";
@@ -171,7 +176,7 @@ class Api extends REST_Controller {
             $this->response($data, 400);   
         } 
 
-        if($facebook_id)
+        if($facebook_id !== '')
         {
             $already_present = $this->user->checkFacebookUser($facebook_id);
             if($already_present !== false)
